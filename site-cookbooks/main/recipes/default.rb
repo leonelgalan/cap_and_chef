@@ -22,11 +22,17 @@ node.default[:rbenv].merge!({
 include_recipe 'ruby_build'
 include_recipe 'rbenv::system'
 
+# Node JS
+node.default[:nodejs][:install_method] = 'package'
+
+include_recipe 'nodejs'
+
 # Unicorn
 
-directory "#{node[:app][:deploy_to]}/shared/config" do
-  owner node[:app][:user]
-  recursive true
+[node[:app][:deploy_to], "#{node[:app][:deploy_to]}/shared", "#{node[:app][:deploy_to]}/shared/config"].each do |directory_name|
+  directory directory_name do
+    owner node[:app][:user]
+  end
 end
 
 template node[:app][:unicorn][:config] do

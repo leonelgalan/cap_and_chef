@@ -1,14 +1,19 @@
 # config valid only for Capistrano 3.1
 lock '3.1.0'
 
+set :rbenv_type, :system
+set :rbenv_ruby, '2.1.1'
+
 set :application, 'cap_and_chef'
+set :deploy_user, 'deployer'
 set :repo_url, "git@github.com:leonelgalan/#{fetch :application}.git"
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
 # Default deploy_to directory is /var/www/my_app
-set :deploy_to, "/home/#{fetch :user}/www/#{fetch :application}"
+puts "/home/#{fetch :deploy_user}/www/#{fetch :application}"
+set :deploy_to, "/home/#{fetch :deploy_user}/www/#{fetch :application}"
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -20,7 +25,7 @@ set :deploy_to, "/home/#{fetch :user}/www/#{fetch :application}"
 # set :log_level, :debug
 
 # Default value for :pty is false
-set :pty, true
+# set :pty, true
 
 # Default value for :linked_files is []
 # set :linked_files, %w{config/database.yml}

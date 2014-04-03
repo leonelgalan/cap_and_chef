@@ -3,7 +3,7 @@ default[:app][:user_group] = 'sudo'
 default[:app][:rails_env] = 'production'
 default[:ruby][:version] = '2.1.1'
 
-default[:app][:name] = 'test'
+default[:app][:name] = 'cap_and_chef'
 default[:app][:deploy_to] = "/home/#{node[:app][:user]}/www/#{node[:app][:name]}"
 
 default[:app][:unicorn][:user] = node[:app][:user]
