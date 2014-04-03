@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+#^syntax detection
+
+site 'http://community.opscode.com/api/v1'
+
+cookbook 'hello_world'
+
+cookbook 'user'
+cookbook 'ruby_build'
+cookbook 'rbenv', github: 'fnichol/chef-rbenv'
+# TODO: Remove next line (it's only for the version restriction) when https://tickets.opscode.com/browse/COOK-4441 is fixed
+cookbook 'build-essential', '~> 1.4.4'
+cookbook 'nginx'
+cookbook 'unicorn'
+cookbook 'database'
