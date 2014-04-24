@@ -1,0 +1,17 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: <%= node[:app][:postgresql][:database] %>
+  pool: 5
+  username: <%= node[:app][:postgresql][:user] %>
+  password: <%= node[:app][:postgresql][:password] %>
+  host: <%= node[:app][:postgresql][:host] %>
+
+staging:
+  adapter: postgresql
+  encoding: unicode
+  database: <%= node[:app][:postgresql][:database] %>
+  pool: 5
+  username: <%= node[:app][:postgresql][:user] %>
+  password: <%= node[:app][:postgresql][:password] %>
+  host: <%= node[:app][:postgresql][:host] %>

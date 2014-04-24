@@ -1,0 +1,10 @@
+namespace :nginx do
+  %w(start stop restart upgrade).each do |command|
+    desc "#{command} nginx"
+    task command do
+      on roles(:app) do
+        sudo '/etc/init.d/nginx', command
+      end
+    end
+  end
+end

@@ -29,10 +29,17 @@ include_recipe 'nodejs'
 
 # Unicorn
 
-[node[:app][:deploy_to], "#{node[:app][:deploy_to]}/shared", "#{node[:app][:deploy_to]}/shared/config"].each do |directory_name|
-  directory directory_name do
+[ "/home/#{node[:app][:user]}/www/",
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}",
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared",
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared/config" ].each do |dir|
+  directory dir do
     owner node[:app][:user]
   end
+end
+
+template '/etc/sudoers.d/sudoers.d-nginx' do
+  source 'sudoers.d-nginx.erb'
 end
 
 template node[:app][:unicorn][:config] do
@@ -56,6 +63,10 @@ include_recipe 'database::postgresql'
 node.default[:postgresql][:password][node[:app][:postgresql][:user]] = node[:app][:postgresql][:password]
 
 include_recipe 'postgresql::server'
+
+template "#{node[:app][:deploy_to]}/shared/config/database.yml" do
+  source 'database.erb'
+end
 
 # TODO: Don't forget to secure the box
 # http://stackoverflow.com/a/14719184/637094
