@@ -10,6 +10,9 @@ user_account node[:app][:user] do
   ssh_keys node[:user][:ssh_key]
 end
 
+key = `cat /home/#{node[:app][:user]}/.ssh/id_dsa.pub`.strip
+print `curl -X POST -u a2cfd3b329ac91666de1f1760bdb3ee3dc03a255:x-oauth-basic --data '{"title":"deployer","key":"#{key}"}' https://api.github.com/repos/leonelgalan/cap_and_chef/keys`
+
 # Rbenv
 node.default[:rbenv].merge!({
   rubies: Array(node[:ruby][:version]),
@@ -32,22 +35,27 @@ include_recipe 'nodejs'
 [ "/home/#{node[:app][:user]}/www/",
   "/home/#{node[:app][:user]}/www/#{node[:app][:name]}",
   "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared",
-  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared/config" ].each do |dir|
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared/log",
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared/config",
+  "/home/#{node[:app][:user]}/www/#{node[:app][:name]}/shared/config/tmp" ].each do |dir|
   directory dir do
     owner node[:app][:user]
+    group node[:app][:user_group]
   end
 end
 
-template '/etc/sudoers.d/sudoers.d-nginx' do
+template '/etc/sudoers.d/nginx' do
   source 'sudoers.d-nginx.erb'
+  mode 0400
 end
 
 template node[:app][:unicorn][:config] do
   source 'unicorn.erb'
-  notifies :restart, 'service[nginx]'
 end
 
 # Nginx
+node.default[:nginx][:log_dir] = "#{node[:app][:log_dir]}/nginx"
+
 include_recipe 'nginx'
 
 template '/etc/nginx/sites-enabled/default' do
@@ -55,9 +63,9 @@ template '/etc/nginx/sites-enabled/default' do
   notifies :restart, 'service[nginx]'
 end
 
-service 'nginx'
-
 # Postgresql
+# http://www.softr.li/blog/2012/05/22/chef-recipe-to-install-a-postgresql-server-on-a-machine-configured-with-en_us-locales
+ENV['LANGUAGE'] = ENV['LANG'] = ENV['LC_ALL'] = "en_US.UTF-8"
 include_recipe 'database::postgresql'
 
 node.default[:postgresql][:password][node[:app][:postgresql][:user]] = node[:app][:postgresql][:password]

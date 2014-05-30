@@ -6,6 +6,9 @@ default[:ruby][:version] = '2.1.1'
 default[:app][:name] = 'cap_and_chef'
 default[:app][:deploy_to] = "/home/#{node[:app][:user]}/www/#{node[:app][:name]}"
 
+default[:app][:log_dir] = "#{node[:app][:deploy_to]}/shared/log"
+default[:app][:pids_dir] = "#{node[:app][:deploy_to]}/shared/tmp/pids"
+
 default[:app][:unicorn][:user] = node[:app][:user]
 default[:app][:unicorn][:pid] = "#{node[:app][:deploy_to]}/current/tmp/pids/unicorn.pid"
 default[:app][:unicorn][:sock] = "/tmp/unicorn.#{node[:app][:name]}.sock"

@@ -1,6 +1,10 @@
 # config valid only for Capistrano 3.1
 lock '3.1.0'
 
+# Troubleshoot
+set :bundle_flags, '--deployment'
+set :log_level, :debug
+
 set :rbenv_type, :system
 set :rbenv_ruby, '2.1.1'
 
@@ -25,7 +29,7 @@ set :deploy_to, "/home/#{fetch :deploy_user}/www/#{fetch :application}"
 # set :log_level, :debug
 
 # Default value for :pty is false
-# set :pty, true
+set :pty, true
 
 # Default value for :linked_files is []
 set :linked_files, %w{config/database.yml}
@@ -39,6 +43,15 @@ set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
+set :unicorn_config_path, "#{fetch :deploy_to}/shared/config/unicorn.rb"
+set :unicorn_rack_env, 'staging'
+
 namespace :deploy do
+  task :reload_unicorn do
+    invoke 'unicorn:restart'
+  end
+
+  before :publishing, :migrate
   after :publishing, 'nginx:restart'
+  after :publishing, :reload_unicorn
 end

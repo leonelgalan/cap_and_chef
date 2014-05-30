@@ -17,4 +17,6 @@
 
 # Deploy
 /.vagrant
-/cookbooks
+/.chef
+/chef/cookbooks
+/chef/tmp/librarian
