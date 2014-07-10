@@ -3,8 +3,6 @@ lock '3.1.0'
 
 # Troubleshoot
 set :bundle_flags, '--deployment'
-set :log_level, :debug
-
 set :rbenv_type, :system
 set :rbenv_ruby, '2.1.1'
 
@@ -51,6 +49,18 @@ namespace :deploy do
     invoke 'unicorn:restart'
   end
 
+  desc 'Runs rake db:create'
+  task create: [:set_rails_env] do
+    on primary fetch(:migration_role) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, "db:create RAILS_ENV=#{fetch(:rails_env)}"
+        end
+      end
+    end
+  end
+
+  before :migrate, :create
   before :publishing, :migrate
   after :publishing, 'nginx:restart'
   after :publishing, :reload_unicorn
