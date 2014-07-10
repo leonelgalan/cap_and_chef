@@ -10,8 +10,10 @@ user_account node[:app][:user] do
   ssh_keys node[:user][:ssh_key]
 end
 
+# Uploads deploy key
+# TODO: Replace with a recipe
 key = `cat /home/#{node[:app][:user]}/.ssh/id_dsa.pub`.strip
-print `curl -X POST -u a2cfd3b329ac91666de1f1760bdb3ee3dc03a255:x-oauth-basic --data '{"title":"deployer","key":"#{key}"}' https://api.github.com/repos/leonelgalan/cap_and_chef/keys`
+print `curl -X POST -u 01782928d5cb54660f3852ec74043d49c4704a74:x-oauth-basic --data '{"title":"deployer","key":"#{key}"}' https://api.github.com/repos/leonelgalan/cap_and_chef/keys`
 
 # Rbenv
 node.default[:rbenv].merge!({
